@@ -1,37 +1,68 @@
-//
-//  ContentView.swift
-//  colourLook
-//
-//  Created by Prathamesh Ahire on 29/5/2025.
-//
-
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var colorManager = ColorManager()
+    @State private var navigateToCamera = false
+    @Namespace var animation
+    @StateObject private var colorManager = ColorManager()
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 20) {
-                Text("Today's Color")
-                    .font(.largeTitle)
-                    .bold()
+        NavigationStack {
+            ZStack {
+                LinearGradient(colors: [.blue.opacity(0.2), .purple.opacity(0.1)],
+                               startPoint: .top, endPoint: .bottom)
+                    .ignoresSafeArea()
 
-                Circle()
-                    .fill(colorManager.todayColor)
-                    .frame(width: 150, height: 150)
-                    .shadow(radius: 10)
+                VStack(spacing: 40) {
+                    Spacer(minLength: 80)
 
-                NavigationLink("Take a Photo", destination: CameraView(targetColor: colorManager.todayColor))
+                    Text("Welcome to Colour Capture")
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(
+                            LinearGradient(colors: [.blue, .purple],
+                                           startPoint: .topLeading,
+                                           endPoint: .bottomTrailing)
+                        )
+                        .padding(.horizontal, 30)
 
-                Spacer()
+                    Text("Find today's colour, capture a photo matching it, and take a moment to refresh yourself.")
+                        .font(.system(size: 18, weight: .medium, design: .rounded))
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 40)
+
+                    Spacer()
+
+                    NavigationLink(destination:
+                        CameraView(targetColor: colorManager.todayColor, namespace: animation)
+                            .environmentObject(colorManager)
+                    , isActive: $navigateToCamera) {
+                        EmptyView()
+                    }
+
+                    Button {
+                        navigateToCamera = true
+                    } label: {
+                        Text("Let's Go")
+                            .font(.system(size: 20, weight: .semibold, design: .rounded))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                LinearGradient(colors: [.blue, .purple], startPoint: .leading, endPoint: .trailing)
+                            )
+                            .foregroundColor(.white)
+                            .cornerRadius(20)
+                            .shadow(color: .purple.opacity(0.4), radius: 8, x: 0, y: 4)
+                            .padding(.horizontal, 40)
+                    }
+
+                    Spacer(minLength: 40)
+                }
+                .padding(.vertical)
             }
-            .padding()
+            .onAppear {
+                colorManager.loadTodayColor()
+            }
         }
-        .environmentObject(colorManager)
     }
-}
-
-#Preview {
-    ContentView()
 }

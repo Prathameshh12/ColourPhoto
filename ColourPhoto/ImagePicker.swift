@@ -1,19 +1,3 @@
-//
-//  ImagePicker.swift
-//  ColourPhoto
-//
-//  Created by Prathamesh Ahire on 12/6/2025.
-//
-
-
-//
-//  ImagePicker.swift
-//  colourLook
-//
-//  Created by Prathamesh Ahire on 29/5/2025.
-//
-
-
 import SwiftUI
 
 struct ImagePicker: UIViewControllerRepresentable {

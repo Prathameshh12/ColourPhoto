@@ -1,23 +1,8 @@
-//
-//  ColorManager.swift
-//  ColourPhoto
-//
-//  Created by Prathamesh Ahire on 12/6/2025.
-//
-
-
-//
-//  ColorManager.swift
-//  colourLook
-//
-//  Created by Prathamesh Ahire on 29/5/2025.
-//
-
-
 import SwiftUI
 
 class ColorManager: ObservableObject {
     @Published var todayColor: Color = .clear
+
     private let colorKey = "dailyColor"
     private let dateKey = "colorDate"
 
@@ -26,19 +11,17 @@ class ColorManager: ObservableObject {
     }
 
     func loadTodayColor() {
-        let today = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
+        let today = Self.dateString(for: Date())
         let savedDate = UserDefaults.standard.string(forKey: dateKey)
 
         if today != savedDate {
-            let newColor = generateRandomColor()
+            let newColor = Self.generateRandomColor()
             todayColor = newColor
             saveColor(newColor)
             UserDefaults.standard.set(today, forKey: dateKey)
-        } else {
-            if let colorData = UserDefaults.standard.data(forKey: colorKey),
-               let uiColor = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(colorData) as? UIColor {
-                todayColor = Color(uiColor)
-            }
+        } else if let data = UserDefaults.standard.data(forKey: colorKey),
+                  let uiColor = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? UIColor {
+            todayColor = Color(uiColor)
         }
     }
 
@@ -49,9 +32,15 @@ class ColorManager: ObservableObject {
         }
     }
 
-    private func generateRandomColor() -> Color {
-        Color(red: Double.random(in: 0.3...1),
-              green: Double.random(in: 0.3...1),
-              blue: Double.random(in: 0.3...1))
+    private static func dateString(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: date)
+    }
+
+    private static func generateRandomColor() -> Color {
+        Color(red: .random(in: 0.3...0.9),
+              green: .random(in: 0.3...0.9),
+              blue: .random(in: 0.3...0.9))
     }
 }
